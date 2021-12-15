@@ -1,18 +1,19 @@
 var canvas, context;
+var connection = new WebSocket("ws://localhost:12345");
 var mouseDown = false;
 var currentStroke = [];
 
 window.onload = function () {
-	//Set variables
+	//SET VARIABLES
 	canvas = document.getElementById("paper");
 	context = canvas.getContext("2d");
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
-	//Add event listeners
+	//ADD EVENT LISTENERS
 	canvas.addEventListener("mousedown", e => mouseDown = true);
 	canvas.addEventListener("mouseup", release);
 	canvas.addEventListener("mousemove", mouseMove);
-	//Clear canvas
+	//CLEAR CANVAS
 	clearCanvas();
 }
 
@@ -37,11 +38,21 @@ function mouseMove(e) {
 function release(e) {
 	mouseDown = false;
 	//send stroke
-	/*CODE NEEDED*/
-
+	connection.send(JSON.stringify(currentStroke));
 	//reset stroke
 	context.beginPath();
 	currentStroke = [];
+}
+
+connection.onmessage = function (message) {
+	var data = JSON.parse(message.data);
+	console.log(data);
+	context.beginPath();
+	for (var point of data) {
+		context.lineTo(point[0], point[1]);
+	}
+	context.stroke();
+	context.beginPath();
 }
 
 /* RESIZING THE CANVAS CLEARS EVERYTHIN
