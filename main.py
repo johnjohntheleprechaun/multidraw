@@ -1,6 +1,10 @@
 from flask import Flask, render_template, url_for
 from flask_socketio import SocketIO, emit
 import json
+import logging
+
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode=None)
