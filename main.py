@@ -8,7 +8,7 @@ log.setLevel(logging.ERROR)
 
 app = Flask(__name__)
 socketio = SocketIO(app, async_mode=None)
-canvas = [0, 0]
+canvas = [[0, 0],[1,0]]
 
 @app.route("/")
 def main():
@@ -16,10 +16,9 @@ def main():
 
 @socketio.event
 def connect():
-    print("hi")
     global canvas
     print(canvas)
-    emit("draw", canvas)
+    emit("draw", json.dumps(canvas))
 
 
 @socketio.event
