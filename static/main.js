@@ -1,6 +1,9 @@
 var canvas, context;
 var mouseDown = false;
 var currentStroke = [];
+var socket = io({"forceNew": true});
+var lines = 0;
+const max = 10;
 
 window.onload = function () {
 	//Set variables
@@ -31,11 +34,18 @@ function mouseMove(e) {
 		//draw stroke
 		context.lineTo(relX, relY);
 		context.stroke();
+		lines += 1;
+		if (lines > max){
+			sendDraw();
+		}
 	}
 }
 
 function release(e) {
 	mouseDown = false;
+	lines = 0;
+	var event = JSON.stringify(currentStroke)
+	socket.emit("draw", event);
 	//send stroke
 	/*CODE NEEDED*/
 
@@ -52,3 +62,20 @@ window.onresize = function () {
 	canvas.height = window.innerHeight;
 }
 */
+
+function sendDraw(){
+	lines = 0;
+	var event = JSON.stringify(currentStroke)
+	socket.emit("draw", event);
+}
+
+socket.on("draw", function (data){
+	data = JSON.parse(data);
+	console.log(data);
+	context.beginPath();
+	for (var point of data) {
+		context.lineTo(point[0], point[1]);
+	}
+	context.stroke();
+	context.beginPath();
+})
