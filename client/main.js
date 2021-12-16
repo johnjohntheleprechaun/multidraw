@@ -1,5 +1,5 @@
 var canvas, context;
-var connection = new WebSocket("ws://192.168.86.21:12345");
+var connection = new WebSocket("ws://" + window.prompt("server address (including port)"));
 var mouseDown = false;
 var currentStroke = [];
 
